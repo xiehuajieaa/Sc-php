@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片收集系统 Ver:1.0</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('https://images4.alphacoders.com/111/1114102.png') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+        }
+        h2 {
+            text-align: center;
+            color: #fff;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin: 10px 0 5px;
+            color: #fff;
+        }
+        input[type="text"],
+        select,
+        input[type="file"],
+        input[type="submit"] {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: #fff;
+        }
+        input[type="text"]::placeholder,
+        select option {
+            color: #fff;
+        }
+        input[type="file"] {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        input[type="file"]::-webkit-file-upload-button {
+            visibility: hidden;
+        }
+        input[type="file"]::before {
+            content: '选择文件';
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+        }
+        input[type="file"]:hover::before {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        input[type="submit"] {
+            background-color: rgba(255, 126, 95, 0.8);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        input[type="submit"]:hover {
+            background-color: rgba(254, 180, 123, 0.8);
+        }
+        .notification, .announcement {
+            display: none;
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+        .announcement {
+            top: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            padding: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div id="announcement" class="announcement"></div>
+    <div class="container">
+        <h2>图片收集系统</h2>
+        <form id="uploadForm" action="upload.php" method="post" enctype="multipart/form-data">
+            <label for="name">姓名:</label>
+            <input type="text" id="name" name="name" placeholder="请输入姓名" required>
+
+            <label for="student_id">学号:</label>
+            <input type="text" id="student_id" name="student_id" placeholder="请输入学号" required>
+
+            <label for="project">项目:</label>
+            <select id="project" name="project" required>
+                <option value="全国计算机等级考试">全国计算机等级考试</option>
+            </select>
+
+            <label for="file">选择图片:</label>
+            <input type="file" id="file" name="file" accept="image/*" required>
+
+            <input type="submit" value="上传">
+        </form>
+        <div id="notification" class="notification"></div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // 防止默认提交行为
+
+            var formData = new FormData(this);
+
+            fetch('upload.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                showNotification(data);
+                this.reset(); // 清空表单
+            })
+            .catch(error => {
+                showNotification('文件上传失败，请重试。');
+            });
+        });
+
+        function showNotification(message) {
+            var notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        function showAnnouncement(message) {
+            var announcement = document.getElementById('announcement');
+            announcement.textContent = message;
+            announcement.style.display = 'block';
+        }
+
+        // 示例公告
+        showAnnouncement('欢迎使用图片收集系统！请确保图片清晰。');
+    </script>
+</body>
+</html>
